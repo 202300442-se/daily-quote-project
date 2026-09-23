@@ -63,8 +63,6 @@ def generate_html(quotes, target_date, generated_at, is_preview=False, environme
     today_quote = pick_quote(quotes, target_date)
     yesterday_quote = pick_quote(quotes, yesterday)
     generated_kst = generated_at.astimezone(KST)
-    colors = ["#a78bfa", "#7dd3fc", "#a5b4fc", "#6ee7b7", "#f9a8d4", "#fcd34d", "#fdba74"]
-    accent = colors[target_date.toordinal() % len(colors)]
     mode_label = "날짜 미리보기" if is_preview else "한국 날짜 기준"
     previous_label = "선택한 날짜의 전날" if is_preview else "어제의 한 문장"
     run_number = environment.get("GITHUB_RUN_NUMBER", "")
@@ -86,50 +84,39 @@ def generate_html(quotes, target_date, generated_at, is_preview=False, environme
   <title>오늘의 한 문장</title>
   <style>
     * {{ box-sizing: border-box; }}
-    :root {{ color-scheme: dark; --accent: {accent}; }}
-    body {{ margin: 0; min-height: 100vh; padding: 42px 22px 30px;
-      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #182235); color: #f1f5f9;
-      display: flex; align-items: center; justify-content: center; }}
-    body::before {{ content: ""; position: fixed; inset: 0; pointer-events: none;
-      background: radial-gradient(circle at 85% 10%, #ffffff08, transparent 40%); }}
-    .container {{ width: 100%; max-width: 760px; text-align: center; position: relative; }}
-    .eyebrow {{ font-size: 11px; letter-spacing: 3px; color: var(--accent); margin: 0 0 12px; }}
-    h1 {{ font-size: 28px; font-weight: 650; margin: 0 0 23px; letter-spacing: -1px; }}
-    .date-badge {{ display: inline-flex; gap: 13px; align-items: center; flex-wrap: wrap; justify-content: center;
-      padding: 9px 20px; border: 1px solid #ffffff26; border-radius: 30px; color: #cbd5e1;
-      background: #ffffff08; font-size: 13px; margin-bottom: 26px; }}
-    .mode {{ color: var(--accent); font-size: 12px; }}
-    .preview-note {{ margin: -10px 0 22px; color: #d8b4fe; font-size: 13px; }}
-    .quote-card {{ background: #ffffff07; border: 1px solid #ffffff1c; border-radius: 24px;
-      padding: 39px 46px 34px; margin-bottom: 20px; box-shadow: 0 18px 45px #00000018; }}
-    .quote-mark {{ display: block; font-family: Georgia, serif; font-size: 74px; line-height: .8;
-      color: var(--accent); opacity: .6; margin-bottom: 10px; }}
-    .quote-text {{ font-family: "AppleMyungjo", "Batang", Georgia, serif; font-size: 29px;
-      font-weight: 600; line-height: 1.75; margin: 0 auto 26px; word-break: keep-all; overflow-wrap: anywhere; }}
-    .divider {{ background: var(--accent); opacity: .5; width: 50px; height: 2px; margin: 0 auto 20px; }}
-    .author {{ font-size: 14px; color: var(--accent); margin: 0 0 7px; overflow-wrap: anywhere; }}
-    .topic {{ font-size: 12px; color: #a8b4c8; margin: 0; overflow-wrap: anywhere; }}
-    .yesterday {{ background: #ffffff04; border: 1px solid #ffffff12; border-radius: 16px;
-      padding: 22px 30px; margin-bottom: 23px; }}
-    .yesterday-label {{ font-size: 11px; color: #a8b4c8; margin: 0 0 11px; }}
-    .yesterday-quote {{ font-family: "AppleMyungjo", "Batang", Georgia, serif; font-size: 16px;
-      color: #cbd5e1; line-height: 1.7; margin: 0; word-break: keep-all; overflow-wrap: anywhere; }}
-    .yesterday-author {{ font-size: 11px; color: #a8b4c8; margin: 10px 0 0; overflow-wrap: anywhere; }}
-    footer {{ font-size: 11px; line-height: 1.9; color: #a8b4c8; }}
-    footer p {{ margin: 3px 0; }}
-    .generated {{ color: #d3dbea; }}
-    @media (max-width: 600px) {{
-      body {{ padding: 30px 17px 24px; }} h1 {{ font-size: 25px; }}
-      .quote-card {{ padding: 32px 23px 28px; }} .quote-text {{ font-size: 23px; }}
-      .yesterday {{ padding: 20px; }} .yesterday-quote {{ font-size: 15px; }}
-    }}
+    :root {{ color-scheme: light; --green: #183f35; --ivory: #f5f2e9; --muted: #62736a; }}
+    body {{ margin: 0; background: var(--ivory); color: var(--green); font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif; padding: 48px 28px 28px; }}
+    .container {{ max-width: 1040px; margin: auto; }}
+    .eyebrow {{ margin: 0 0 22px; padding-bottom: 22px; border-bottom: 1px solid #183f3530; font-size: 10px; font-weight: 700; letter-spacing: .25em; }}
+    h1 {{ font-family: "AppleMyungjo", "Batang", Georgia, serif; font-size: clamp(32px,5vw,48px); font-weight: 400; letter-spacing: -.05em; margin: 32px 0 12px; }}
+    .intro {{ font-size: 14px; line-height: 1.8; color: var(--muted); margin: 0 0 28px; }}
+    .date-badge {{ display: flex; align-items: center; gap: 14px; margin-bottom: 22px; font-size: 12px; letter-spacing: .05em; }}
+    .mode {{ color: var(--muted); padding-left: 14px; border-left: 1px solid #183f3530; }}
+    .preview-note {{ border-left: 2px solid #a68a51; padding: 10px 16px; font-size: 13px; }}
+    .quote-card {{ position: relative; overflow: hidden; background: var(--green); color: var(--ivory); border-radius: 4px 64px 4px 4px; padding: 48px 70px 42px; text-align: center; box-shadow: 0 18px 40px #183f3510; }}
+    .quote-card::after {{ content: ""; width: 220px; height: 220px; border: 1px solid #f5f2e914; border-radius: 50%; position: absolute; right: -120px; bottom: -100px; pointer-events: none; }}
+    .quote-mark {{ display: block; font: 76px/.8 Georgia,serif; color: #c2bf9e; margin: 0 0 16px; }}
+    .quote-text {{ position: relative; font-family: "AppleMyungjo", "Batang", Georgia,serif; font-size: clamp(25px,3.5vw,38px); font-weight: 400; line-height: 1.8; word-break: keep-all; overflow-wrap: anywhere; max-width: 730px; margin: 0 auto 26px; letter-spacing: -.035em; }}
+    .divider {{ width: 30px; height: 1px; background: #c2bf9e; margin: 0 auto 20px; }}
+    .author {{ font-size: 13px; color: #e1e4d7; margin: 0 0 10px; }}
+    .topic {{ display: inline-block; font-size: 11px; color: #d3dbca; border: 1px solid #f5f2e930; padding: 5px 12px; border-radius: 20px; margin: 0; }}
+    .yesterday {{ display: grid; grid-template-columns: 210px 1fr; column-gap: 30px; padding: 30px 0; margin: 24px 0 14px; border-top: 1px solid #183f3530; border-bottom: 1px solid #183f3530; }}
+    .yesterday-label {{ grid-row: span 2; font-size: 11px; line-height: 1.8; color: var(--muted); margin: 0; }}
+    .yesterday-quote {{ font-family: "AppleMyungjo", "Batang", Georgia, serif; font-size: 19px; line-height: 1.8; word-break: keep-all; overflow-wrap: anywhere; margin: 0; }}
+    .yesterday-author {{ font-size: 11px; color: var(--muted); margin: 10px 0 0; }}
+    footer {{ display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; padding-top: 12px; font-size: 10px; line-height: 1.9; color: var(--muted); }}
+    footer p {{ margin: 0; }}
+    footer details {{ width: 100%; }}
+    summary {{ cursor: pointer; width: fit-content; padding: 5px 0; }}
+    summary:focus-visible {{ outline: 2px solid var(--green); outline-offset: 4px; }}
+    @media(max-width:600px) {{ body {{ padding: 28px 20px 22px; }} h1 {{ margin-top: 26px; }} .quote-card {{ padding: 38px 25px 34px; border-top-right-radius: 44px; }} .yesterday {{ grid-template-columns: 1fr; gap: 12px; padding: 24px 0; }} .yesterday-label {{ grid-row: auto; }} .yesterday-quote {{ font-size: 17px; }} .yesterday-author {{ margin: 0; }} footer {{ display: block; }} footer p {{ margin-bottom: 5px; }} }}
   </style>
 </head>
 <body>
   <main class="container">
     <p class="eyebrow">TODAY IN ONE SENTENCE</p>
     <h1>오늘의 한 문장</h1>
+    <p class="intro">잠시 머물러, 오늘의 문장을 마음에 담아보세요.</p>
     <div class="date-badge"><time id="selected-date" datetime="{target_date.isoformat()}">{target_date.isoformat()}</time><span class="mode">{mode_label}</span></div>
     {preview_note}
     <section class="quote-card" aria-label="선택한 날짜의 문구">
@@ -146,8 +133,8 @@ def generate_html(quotes, target_date, generated_at, is_preview=False, environme
     </section>
     <footer>
       <p class="generated">마지막 생성 <time id="generated-at" datetime="{generated_kst.isoformat(timespec='seconds')}">{generated_kst.strftime('%Y.%m.%d %H:%M:%S')} KST</time></p>
-      <p id="build-info">{provenance_text}</p>
-      <p>하루 한 문장, 배움과 협업을 위한 수업 예제</p>
+      <details><summary>갱신 기록 보기</summary><p id="build-info">{provenance_text}</p></details>
+      <p>하루 한 문장, 일상에 작은 깊이를 더하다.</p>
     </footer>
   </main>
 </body>
